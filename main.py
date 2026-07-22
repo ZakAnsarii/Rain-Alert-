@@ -28,7 +28,7 @@ response.raise_for_status()
 data = response.json()
 
 
-today = datetime.now().strftime("%Y-%m-%d")
+#today = datetime.now().strftime("%Y-%m-%d")
 
 
 will_rain = False
@@ -42,8 +42,8 @@ for forecast in data["list"]:
     hour = int(forecast_time[:2])
 
     # Ignore forecasts that aren't today
-    if forecast_date != today:
-        continue
+    # if forecast_date != today:
+    #     continue
 
     # Ignore forecasts outside office hours
     if not (8 <= hour <= 18):
@@ -51,19 +51,17 @@ for forecast in data["list"]:
 
     weather_id = forecast["weather"][0]["id"]
 
-    #if weather_id < 700:
-    if True:
+    if weather_id < 700:
         will_rain = True
-        rain_times.append(forecast_time)
+        rain_times.append(f"{forecast_date},{forecast_time}")
 
 if will_rain:
-
     message = "Subject:Umbrella Reminder \n\n"
     message += "Rain is expected during office hours.\n\n"
     message += "Expected rain times:\n"
 
     for time in rain_times:
-        message += f"- {time[:5]}\n"
+        message += f"- {time}\n"
 
     with smtplib.SMTP("smtp.gmail.com", 587) as connection:
         connection.starttls()
